@@ -1,0 +1,30 @@
+:root {
+    --cor-principal: #e91e63;
+    --cor-secundaria: #2c3e50;
+    --texto-destaque: #ffeb3b;
+    --branco: #f9f9f9;
+    --preto: #333;
+}
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    color: var(--preto);
+    line-height: 1.6;
+}
+
+header {
+    background: linear-gradient(135deg, var(--cor-principal), var(--cor-secundaria));
+    color: white;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
