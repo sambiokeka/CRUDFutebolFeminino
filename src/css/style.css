@@ -37,6 +37,7 @@ header {
 }
 
 
+
 .controles {
     background-color: white;
     padding: 1rem;
@@ -71,15 +72,21 @@ button {
     transition: background-color 0.3s;
 }
 
+.ordem-botoes {
+    margin-left: auto; 
+    display: flex;
+    gap: 0.5rem;
+}
+
 button:hover {
     background-color: #c2185b;
 }
 
-.btn-adiconar {
+.btn-adicionar {
     background-color: var(--verde);
 }
 
-.btn-adiconar:hover {
+.btn-adicionar:hover {
     background-color: #388e3c;
 }
 
@@ -172,7 +179,7 @@ button:hover {
     color: var(--texto-destaque);
 }
 
-.btn-editar, .btn-delete {
+.btn-editar, .btn-deletar {
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
 }
