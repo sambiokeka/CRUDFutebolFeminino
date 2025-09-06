@@ -5,6 +5,7 @@
     --branco: #f9f9f9;
     --preto: #333;
     --vermelho-alerta: #f44336;
+    --verde: #4caf50;
 }
 
 
@@ -35,6 +36,26 @@ header {
     padding: 1rem;
 }
 
+
+.controles {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+
+.filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    flex-grow: 1;
+}
+
 input, select, button {
     padding: 0.5rem;
     border: 1px solid #ddd;
@@ -54,6 +75,21 @@ button:hover {
     background-color: #c2185b;
 }
 
+.btn-adiconar {
+    background-color: var(--verde);
+}
+
+.btn-adiconar:hover {
+    background-color: #388e3c;
+}
+
+.btn-organizar {
+    background-color: var(--cor-secundaria);
+}
+
+.btn-organizar:hover {
+    background-color: #1a252f;
+}
 
 /* JOGADORAS CARDS */
 
