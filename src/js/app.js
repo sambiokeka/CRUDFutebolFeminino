@@ -52,13 +52,24 @@ const jogadorasIniciais = [
     }
 ];
 
-// Variavel para guardar no local storage
+// Variável para guardar no local storage
 let jogadorasGuardar = [];
+
+// Variável para o negocio de organizar por nome/posição, e como eu quero q ela possa ser tanto de A-Z ou Z-A eu deixo como let
+let ordemAtual = { field: null, direcao: 'asc' };
+
+
+// Variável para ordem de nomes e posição
+const ordemNomeBtn = document.getElementById('ordemNome');
+const ordemPosicaoBtn = document.getElementById('ordemPosicao');
+
+
 
 const jogadorasContainer = document.getElementById('jogadorasContainer');
 
 document.addEventListener('DOMContentLoaded', () => {
     carregarLocalStorage();
+    setupEventListeners();
 });
 
 
@@ -117,12 +128,46 @@ function salvarLocalStorage() {
 
 
 function carregarJogadoras() {
-  jogadorasContainer.innerHTML = ''; 
-  jogadorasIniciais.forEach(jogadoras => {
-    const card = criarJogadorasCard(jogadoras);
-    jogadorasContainer.appendChild(card);
-  });
+    jogadorasContainer.innerHTML = ''; 
+    jogadorasGuardar.forEach(jogadoras => {
+        const card = criarJogadorasCard(jogadoras);
+        jogadorasContainer.appendChild(card);
+    });
 }
 
+
 document.addEventListener('DOMContentLoaded', carregarJogadoras);
+
+// Ordenar jogadoras
+function ordemJogadoras(field) {
+    if (ordemAtual.field === field) {
+        // A-Z -> Z-A se clicar no botão mais de uma vez
+        ordemAtual.direcao = ordemAtual.direcao === 'asc' ? 'desc' : 'asc';
+    } else {
+        // A-Z
+        ordemAtual.field = field;
+        ordemAtual.direcao = 'asc';
+    }
+    
+    jogadorasGuardar.sort((a, b) => {
+        let valorA = a[field].toLowerCase();
+        let valorB = b[field].toLowerCase();
+
+        if (ordemAtual.direcao === 'asc') {
+            return valorA.localeCompare(valorB);
+        } else {
+            return valorB.localeCompare(valorA);
+        }
+    });
+
+    carregarJogadoras();
+}
+
+
+// Configurar event listeners
+function setupEventListeners() {
+    // Botões de organização, dependendo de onde foi clicado chamam a mesma função mas com argumentos diferentes, argumentos q são 'campos' das jogadoras
+    ordemNomeBtn.addEventListener('click', () => ordemJogadoras('nome'));
+    ordemPosicaoBtn.addEventListener('click', () => ordemJogadoras('posicao'));
+}
 
