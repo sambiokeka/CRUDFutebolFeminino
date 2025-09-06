@@ -4,6 +4,7 @@
     --texto-destaque: #ffeb3b;
     --branco: #f9f9f9;
     --preto: #333;
+    --vermelho-alerta: #f44336;
 }
 
 
@@ -28,3 +29,130 @@ header {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+input, select, button {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+button {
+    background-color: var(--cor-principal);
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #c2185b;
+}
+
+
+/* JOGADORAS CARDS */
+
+.jogadoras-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.jogadoras-card {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.jogadoras-card:hover {
+    transform: translateY(-5px);
+}
+
+.jogadoras-imagem {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-bottom: 3px solid var(--cor-principal);
+}
+
+.jogadoras-info {
+    padding: 1rem;
+}
+
+.jogadoras-nome {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--cor-secundaria);
+}
+
+.jogadoras-detalhes {
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.jogadoras-status {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.status {
+    background-color: #f0f0f0;
+    padding: 0.5rem;
+    border-radius: 4px;
+}
+
+.status-valor {
+    font-weight: bold;
+    color: var(--cor-principal);
+}
+
+.jogadoras-botoes {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+
+.btn-favoritar {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #ccc;
+    cursor: pointer;
+    padding: 0;
+}
+
+.btn-favoritar.active {
+    color: var(--texto-destaque);
+}
+
+.btn-editar, .btn-delete {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.btn-editar {
+    background-color: #2196f3;
+}
+
+.btn-editar:hover {
+    background-color: #1976d2;
+}
+
+.btn-deletar {
+    background-color: var(--vermelho-alerta);
+}
+
+.btn-deletar:hover {
+    background-color: #d32f2f;
+}
