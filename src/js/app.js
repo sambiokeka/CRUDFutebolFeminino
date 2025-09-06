@@ -1,5 +1,6 @@
 const jogadorasIniciais = [
     {
+        "id": 1,
         "nome": "Andressa Alves",
         "posicao": "Meio-campo",
         "clube": "Corinthians",
@@ -10,6 +11,7 @@ const jogadorasIniciais = [
         "favorita": false
     },
     {
+        "id": 2,
         "nome": "Dayana Rodríguez",
         "posicao": "Meio-campo",
         "clube": "Corinthians",
@@ -20,6 +22,7 @@ const jogadorasIniciais = [
         "favorita": false
     },
     {
+        "id": 3,
         "nome": "Mariza",
         "posicao": "Zagueira",
         "clube": "Corinthians",
@@ -30,6 +33,7 @@ const jogadorasIniciais = [
         "favorita": false
     },
     {
+        "id": 4,
         "nome": "Thaís Regina",
         "posicao": "Zagueira",
         "clube": "Corinthians",
@@ -40,6 +44,7 @@ const jogadorasIniciais = [
         "favorita": false
     },
     {
+        "id": 5,
         "nome": "Letícia Teles",
         "posicao": "Zagueira",
         "clube": "Corinthians",
@@ -52,106 +57,123 @@ const jogadorasIniciais = [
     }
 ];
 
-// Variável para guardar no local storage
-let jogadorasGuardar = [];
 
-// Variável para o negocio de organizar por nome/posição, e como eu quero q ela possa ser tanto de A-Z ou Z-A eu deixo como let
-let ordemAtual = { field: null, direcao: 'asc' };
+// Coisas q acontecem quando o site carrega na hora ta maluco, e quase sempre na verdade? (meio q isso)
 
+        // Variável para guardar no local storage
+        let jogadorasGuardadas = [];
 
-// Variável para ordem de nomes e posição
-const ordemNomeBtn = document.getElementById('ordemNome');
-const ordemPosicaoBtn = document.getElementById('ordemPosicao');
+        // Variável para o negocio de organizar por nome/posição, e como eu quero q ela possa ser tanto de A-Z ou Z-A eu deixo como let
+        let ordemAtual = { campo: null, direcao: 'asc' };
 
 
+        // Constante para ordem de nomes e posição
+        const ordemNomeBtn = document.getElementById('ordemNome');
+        const ordemPosicaoBtn = document.getElementById('ordemPosicao');
 
-const jogadorasContainer = document.getElementById('jogadorasContainer');
-
-document.addEventListener('DOMContentLoaded', () => {
-    carregarLocalStorage();
-    setupEventListeners();
-});
+        // Constante do campo q vai ter as cartas de jogadoras, pra dps jogar tudo aq
+        const jogadorasContainer = document.getElementById('jogadorasContainer');
 
 
-function carregarLocalStorage() {
-    const stored = localStorage.clear('jogadorasGuardar');
-    if (stored) {
-        jogadorasGuardar = JSON.parse(stored);
-    } else {
-        jogadorasGuardar = jogadorasIniciais;
-        localStorage.setItem('jogadorasGuardar', JSON.stringify(jogadorasGuardar));
-    }
-    carregarJogadoras();
+        // Acontece quando a página inicia
+        document.addEventListener('DOMContentLoaded', () => {
+            setupEventListeners();
+            carregarLocalStorage();
+        });
+
+        // Event listeners
+        function setupEventListeners() {
+            // Botões de organização, dependendo de onde foi clicado chamam a mesma função mas com argumentos diferentes, argumentos q são 'campos' das jogadoras
+            ordemNomeBtn.addEventListener('click', () => ordemJogadoras('nome'));
+            ordemPosicaoBtn.addEventListener('click', () => ordemJogadoras('posicao'));
+        }
+
+        // Carrega o local Storage, se tiver algo salvo ele passa pro site chamando a função carregarJogadoras, se n tiver ele salva as jogadoras iniciais no local sotrage
+        function carregarLocalStorage() {
+            const stored = localStorage.getItem('jogadorasGuardadas');
+            if (stored) {
+                jogadorasGuardadas = JSON.parse(stored);
+            } else {
+                jogadorasGuardadas = jogadorasIniciais;
+                localStorage.setItem('jogadorasGuardadas', JSON.stringify(jogadorasGuardadas));
+            }
+            carregarJogadoras();
+        }
+
+        // Cria as cartas das jogadoras
+        function criarJogadorasCard(jogadoras) {
+            const card = document.createElement('div');
+            card.className = 'jogadoras-card';
+            card.dataset.id = jogadoras.id;
+            
+            card.innerHTML = `
+                <img src="${jogadoras.foto}" alt="${jogadoras.nome}" class="jogadoras-imagem">
+                <div class="jogadoras-info">
+                    <h3 class="jogadoras-nome">${jogadoras.nome}</h3>
+                    <p class="jogadoras-detalhes">${jogadoras.posicao} • ${jogadoras.clube}</p>
+                    <div class="jogadoras-status">
+                        <div class="status">
+                            <div class="status-valor">${jogadoras.gols}</div>
+                            <div class="status-label">Gols</div>
+                        </div>
+                        <div class="status">
+                            <div class="status-valor">${jogadoras.assistencias}</div>
+                            <div class="status-label">Assistências</div>
+                        </div>
+                        <div class="status">
+                            <div class="status-valor">${jogadoras.jogos}</div>
+                            <div class="status-label">Jogos</div>
+                        </div>
+                    </div>
+                    <div class="jogadoras-botoes">
+                        <button class="btn-favoritar ${jogadoras.favorita ? 'active' : ''}">★</button>
+                        <div>
+                            <button class="btn-editar">Editar</button>
+                            <button class="btn-deletar">Excluir</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            //tenho q chamar isso aq dentro pq se chamo fora ela as vezes n existe e trava tudo, aq dentro pelo menos ela sempre vai achar oq precisa
+            const favoritarBtn = card.querySelector('.btn-favoritar');
+            
+            favoritarBtn.addEventListener('click', () => ativarFavorito(jogadoras.id));
+
+            return card;
+        }
+                
+        // Carrega o jogadorasContainer, é chamado pela função carregarLocalStorage(), e pela função ordemJogadoras()
+        function carregarJogadoras() {
+            jogadorasContainer.innerHTML = ''; 
+            jogadorasGuardadas.forEach(jogadoras => {
+                const card = criarJogadorasCard(jogadoras);
+                jogadorasContainer.appendChild(card);
+            });
+        }
+
+
+// FUNÇÕES Q ACONTECEM PQ O USUARIO FAZ ACONTECER (as vezes)
+
+
+function salvarJogadoras() {
+    localStorage.setItem('jogadorasGuardadas', JSON.stringify(jogadorasGuardadas));
 }
 
-function criarJogadorasCard(jogadoras) {
-    const card = document.createElement('div');
-    card.className = 'jogadoras-card';
-    card.dataset.id = jogadoras.id;
-    
-    card.innerHTML = `
-        <img src="${jogadoras.foto}" alt="${jogadoras.nome}" class="jogadoras-imagem">
-        <div class="jogadoras-info">
-            <h3 class="jogadoras-nome">${jogadoras.nome}</h3>
-            <p class="jogadoras-detalhes">${jogadoras.posicao} • ${jogadoras.clube}</p>
-            <div class="jogadoras-status">
-                <div class="status">
-                    <div class="status-valor">${jogadoras.gols}</div>
-                    <div class="status-label">Gols</div>
-                </div>
-                <div class="status">
-                    <div class="status-valor">${jogadoras.assistencias}</div>
-                    <div class="status-label">Assistências</div>
-                </div>
-                <div class="status">
-                    <div class="status-valor">${jogadoras.jogos}</div>
-                    <div class="status-label">Jogos</div>
-                </div>
-            </div>
-            <div class="jogadoras-botoes">
-                <button class="btn-favoritar ${jogadoras.favorita ? 'active' : ''}">★</button>
-                <div>
-                    <button class="btn-editar">Editar</button>
-                    <button class="btn-deletar">Excluir</button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    return card;
-}
-
-
-function salvarLocalStorage() {
-    localStorage.setItem('jogadorasGuardar', JSON.stringify(jogadorasGuardar));
-}
-
-
-function carregarJogadoras() {
-    jogadorasContainer.innerHTML = ''; 
-    jogadorasGuardar.forEach(jogadoras => {
-        const card = criarJogadorasCard(jogadoras);
-        jogadorasContainer.appendChild(card);
-    });
-}
-
-
-document.addEventListener('DOMContentLoaded', carregarJogadoras);
-
-// Ordenar jogadoras
-function ordemJogadoras(field) {
-    if (ordemAtual.field === field) {
+// Ordenar jogadoras, é chamado no setupEventListener()
+function ordemJogadoras(campo) {
+    if (ordemAtual.campo === campo) {
         // A-Z -> Z-A se clicar no botão mais de uma vez
         ordemAtual.direcao = ordemAtual.direcao === 'asc' ? 'desc' : 'asc';
     } else {
         // A-Z
-        ordemAtual.field = field;
+        ordemAtual.campo = campo;
         ordemAtual.direcao = 'asc';
     }
     
-    jogadorasGuardar.sort((a, b) => {
-        let valorA = a[field].toLowerCase();
-        let valorB = b[field].toLowerCase();
+    jogadorasGuardadas.sort((a, b) => {
+        let valorA = a[campo].toLowerCase();
+        let valorB = b[campo].toLowerCase();
 
         if (ordemAtual.direcao === 'asc') {
             return valorA.localeCompare(valorB);
@@ -163,11 +185,13 @@ function ordemJogadoras(field) {
     carregarJogadoras();
 }
 
-
-// Configurar event listeners
-function setupEventListeners() {
-    // Botões de organização, dependendo de onde foi clicado chamam a mesma função mas com argumentos diferentes, argumentos q são 'campos' das jogadoras
-    ordemNomeBtn.addEventListener('click', () => ordemJogadoras('nome'));
-    ordemPosicaoBtn.addEventListener('click', () => ordemJogadoras('posicao'));
+// Alternar favorito
+function ativarFavorito(jogadoraId) {
+    const jogadorasIndentificador = jogadorasGuardadas.findIndex(j => j.id === jogadoraId);
+    
+    if (jogadorasIndentificador !== -1) {
+        jogadorasGuardadas[jogadorasIndentificador].favorita = !jogadorasGuardadas[jogadorasIndentificador].favorita;
+        salvarJogadoras();
+        carregarJogadoras();
+    }
 }
-
