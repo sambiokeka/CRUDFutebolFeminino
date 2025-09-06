@@ -1,3 +1,5 @@
+// Jogadoras q o senhor pediu como base
+
 const jogadorasIniciais = [
     {
         "id": 1,
@@ -58,7 +60,7 @@ const jogadorasIniciais = [
 ];
 
 
-// Coisas q acontecem quando o site carrega na hora ta maluco, e quase sempre na verdade? (meio q isso)
+// Coisas q acontecem quando o site carrega na hora ta maluco, e quase sempre na verdade? (meio q isso) 
 
         // Variável para guardar no local storage
         let jogadorasGuardadas = [];
@@ -74,6 +76,8 @@ const jogadorasIniciais = [
         // Constante do campo q vai ter as cartas de jogadoras, pra dps jogar tudo aq
         const jogadorasContainer = document.getElementById('jogadorasContainer');
 
+        const pesquisarInpt = document.getElementById('pesquisar');
+
 
         // Acontece quando a página inicia
         document.addEventListener('DOMContentLoaded', () => {
@@ -86,6 +90,7 @@ const jogadorasIniciais = [
             // Botões de organização, dependendo de onde foi clicado chamam a mesma função mas com argumentos diferentes, argumentos q são 'campos' das jogadoras
             ordemNomeBtn.addEventListener('click', () => ordemJogadoras('nome'));
             ordemPosicaoBtn.addEventListener('click', () => ordemJogadoras('posicao'));
+            pesquisarInpt.addEventListener('input', carregarJogadoras);
         }
 
         // Carrega o local Storage, se tiver algo salvo ele passa pro site chamando a função carregarJogadoras, se n tiver ele salva as jogadoras iniciais no local sotrage
@@ -100,7 +105,7 @@ const jogadorasIniciais = [
             carregarJogadoras();
         }
 
-        // Cria as cartas das jogadoras
+        // Cria as cartas das jogadoras, é chamado no CarregarJogadoras()
         function criarJogadorasCard(jogadoras) {
             const card = document.createElement('div');
             card.className = 'jogadoras-card';
@@ -145,22 +150,45 @@ const jogadorasIniciais = [
                 
         // Carrega o jogadorasContainer, é chamado pela função carregarLocalStorage(), e pela função ordemJogadoras()
         function carregarJogadoras() {
+            const pesquisa = pesquisarInpt.value.toLowerCase();
+            
+            let jogadorasFiltradas = [...jogadorasGuardadas];
+
+            // Filtrar jogadoras
+            jogadorasFiltradas = jogadorasFiltradas.filter(jogadoras => {
+                const nomeCerto = jogadoras.nome.toLowerCase().includes(pesquisa) || 
+                                  jogadoras.posicao.toLowerCase().includes(pesquisa);
+                
+                return nomeCerto;
+            });
+
+            // Organiza com base na ordem q ta definida asc, ou desc (AZ / Z-A)
+            if (ordemAtual.campo) {
+                jogadorasFiltradas.sort((a, b) => {
+                    let valorA = a[ordemAtual.campo].toLowerCase();
+                    let valorB = b[ordemAtual.campo].toLowerCase();
+
+                    if (valorA < valorB) return ordemAtual.direcao === 'asc' ? -1 : 1;
+                    if (valorA > valorB) return ordemAtual.direcao === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+                                                                                        
             jogadorasContainer.innerHTML = ''; 
-            jogadorasGuardadas.forEach(jogadoras => {
+            jogadorasFiltradas.forEach(jogadoras => {
                 const card = criarJogadorasCard(jogadoras);
                 jogadorasContainer.appendChild(card);
             });
+                
         }
 
-
 // FUNÇÕES Q ACONTECEM PQ O USUARIO FAZ ACONTECER (as vezes)
-
 
 function salvarJogadoras() {
     localStorage.setItem('jogadorasGuardadas', JSON.stringify(jogadorasGuardadas));
 }
 
-// Ordenar jogadoras, é chamado no setupEventListener()
+// Define a ordem q vai ser usada no carregar jogadoras, A-Z ou Z-A, muda quando clica no ordenar nome ou posição, é chamado no setupEventListener()
 function ordemJogadoras(campo) {
     if (ordemAtual.campo === campo) {
         // A-Z -> Z-A se clicar no botão mais de uma vez
@@ -170,18 +198,6 @@ function ordemJogadoras(campo) {
         ordemAtual.campo = campo;
         ordemAtual.direcao = 'asc';
     }
-    
-    jogadorasGuardadas.sort((a, b) => {
-        let valorA = a[campo].toLowerCase();
-        let valorB = b[campo].toLowerCase();
-
-        if (ordemAtual.direcao === 'asc') {
-            return valorA.localeCompare(valorB);
-        } else {
-            return valorB.localeCompare(valorA);
-        }
-    });
-
     carregarJogadoras();
 }
 
