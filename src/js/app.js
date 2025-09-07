@@ -72,6 +72,10 @@ const jogadorasIniciais = [
             const ordemNomeBtn = document.getElementById('ordemNome');
             const ordemPosicaoBtn = document.getElementById('ordemPosicao');
 
+            // Filtro de times
+            const filtroTimeSelect = document.getElementById('filtrarTime');
+            filtroTimeSelect.addEventListener('change', carregarJogadoras);
+
             // Constante do campo q vai ter as cartas de jogadoras, pra dps jogar tudo aq
             const jogadorasContainer = document.getElementById('jogadorasContainer');
 
@@ -89,6 +93,10 @@ const jogadorasIniciais = [
             // Variavel para ver qual jogadora esta sendo editada é usada no editarJogadora()
             let jogadoraEmEdicao = null
             
+
+
+
+
             // Acontece quando a página inicia
             document.addEventListener('DOMContentLoaded', () => {
                 setupEventListeners();
@@ -176,38 +184,70 @@ const jogadorasIniciais = [
                 return card;
             }
                     
+
+            function atualizarFiltroTimes() {
+                const select = document.getElementById('filtrarTime');
+                const valorAtual = select.value; 
+
+                select.innerHTML = '<option value="">Todos os clubes</option>'; 
+
+                // array para os clubes
+                const clubes = []; 
+                // só adiciona na array se n tiver ainda
+                jogadorasGuardadas.forEach(j => {
+                    if (!clubes.includes(j.clube)) {
+                        clubes.push(j.clube);
+                    }
+                });
+
+                clubes.forEach(clube => {
+                    const option = document.createElement('option');
+                    option.value = clube;
+                    option.textContent = clube;
+                    select.appendChild(option);
+                });
+
+                // restaura o valor selecionado
+                if (valorAtual) {
+                    select.value = valorAtual;
+                }
+            }
+
+
             // Carrega o jogadorasContainer, é chamado pela função carregarLocalStorage(), setupEventListener(), ordemJogadoras(),  ativarFavorito(), enviarForm() e deletarJogadora()
             function carregarJogadoras() {
                 const pesquisa = pesquisarInpt.value.toLowerCase();
-                
+                const clubeSelecionado = filtroTimeSelect.value;
+
                 let jogadorasFiltradas = [...jogadorasGuardadas];
 
-                // Filtrar jogadoras
-                jogadorasFiltradas = jogadorasFiltradas.filter(jogadoras => {
-                    const nomeCerto = jogadoras.nome.toLowerCase().includes(pesquisa) || 
-                                    jogadoras.posicao.toLowerCase().includes(pesquisa);
-                    
-                    return nomeCerto;
+                // Filtrar por pesquisa e clube
+                jogadorasFiltradas = jogadorasFiltradas.filter(j => {
+                    const batePesquisa = j.nome.toLowerCase().includes(pesquisa) ||
+                                        j.posicao.toLowerCase().includes(pesquisa);
+                    const bateClube = !clubeSelecionado || j.clube === clubeSelecionado;
+                    return batePesquisa && bateClube;
                 });
 
-                // Organiza com base na ordem q ta definida asc, ou desc (AZ / Z-A)
+                // Ordenar
                 if (ordemAtual.campo) {
                     jogadorasFiltradas.sort((a, b) => {
                         let valorA = a[ordemAtual.campo].toLowerCase();
                         let valorB = b[ordemAtual.campo].toLowerCase();
-
                         if (valorA < valorB) return ordemAtual.direcao === 'asc' ? -1 : 1;
                         if (valorA > valorB) return ordemAtual.direcao === 'asc' ? 1 : -1;
                         return 0;
                     });
                 }
-                                                                                                
-                jogadorasContainer.innerHTML = ''; 
-                jogadorasFiltradas.forEach(jogadoras => {
-                    const card = criarJogadorasCard(jogadoras);
+
+                // Limpar container e adicionar cards
+                jogadorasContainer.innerHTML = '';
+                jogadorasFiltradas.forEach(j => {
+                    const card = criarJogadorasCard(j);
                     jogadorasContainer.appendChild(card);
                 });
-                    
+
+                atualizarFiltroTimes();
             }
 
 // FUNÇÕES Q ACONTECEM PQ O USUARIO FAZ ACONTECER (as vezes)
@@ -350,3 +390,20 @@ function deletarJogadora(jogadoraId) {
         alert("Jogadora Removida com Sucesso!")
     }
 }
+
+
+function aplicarFiltrosTimes() {
+    const pesquisa = document.getElementById('pesquisar').value.toLowerCase();
+    const clubeSelecionado = document.getElementById('filtrarTime').value;
+
+    const container = document.getElementById('jogadorasContainer');
+    container.innerHTML = '';
+
+    jogadorasGuardadas
+        .filter(j =>
+            (!clubeSelecionado || j.clube === clubeSelecionado) &&
+            j.nome.toLowerCase().includes(pesquisa)
+        )
+        .forEach(j => criarJogadorasCard(j));
+}
+
