@@ -259,7 +259,7 @@ function enviarForm(e) {
     const jogos = parseInt(document.getElementById('jogadoraJogos').value);
 
     //logica para achar o id da nova jogadora
-    const novoId = 1;
+    let novoId = 1;
     if (jogadorasGuardadas.length > 0) {
         novoId = jogadorasGuardadas[jogadorasGuardadas.length - 1].id + 1;
     }
