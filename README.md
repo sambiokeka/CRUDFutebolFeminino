@@ -9,7 +9,7 @@ https://sambiokeka.github.io/CRUDFutebolFeminino/
 
 ### Integrantes 
 
-- **Erick Jooji Bertassoli Yamashita** (RM: 564482)  
+- **Erick Jooji** (RM: 564482)  
 - **Luiz Dalboni** (RM: 564189)  
 - **Matheus Tozarelli** (RM: 563490)  
 - **Rafael Lorenzini** (RM: 563643)  
@@ -122,4 +122,5 @@ select.value = valorAtual;
 * A aplicação é totalmente **front-end**, utilizando apenas **HTML, CSS e JavaScript**.
 * Todas as alterações permanecem mesmo após fechar o navegador, graças ao **LocalStorage**.
 * O filtro de clubes é dinâmico e evita duplicatas, mantendo a seleção do usuário após atualização.
+
 
