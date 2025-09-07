@@ -78,14 +78,3 @@ A aplicação deve ter obrigatoriamente:
     ]
     ```
     
-2. **Requisitos obrigatórios:**
-    3. Cadastro (Create)
-        1. Formulário com campos: nome, posição, clube, estatísticas e foto (URL).
-        2. O formulário não deve aceitar respostas vazias.
-        3. Mostrar alert de feedback (“Jogadora adicionada com sucesso!”).
-    4. Edição (Update)
-        1. Permitir modificar os dados (inclusive a foto) de uma jogadora existente.
-        2. Mostrar alert de feedback (“Jogadora editada com sucesso!”).
-    5. Remoção (Delete)
-        1. Permitir excluir uma jogadora da lista. 
-        2. Mostrar alert de feedback (“Jogadora removida com sucesso!”).

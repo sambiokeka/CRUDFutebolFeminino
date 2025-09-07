@@ -86,7 +86,9 @@ const jogadorasIniciais = [
             const fecharModal = document.querySelector('.fechar'); 
             const jogadoraFormulario = document.getElementById('jogadoraFormulario'); 
 
-
+            // Variavel para ver qual jogadora esta sendo editada é usada no editarJogadora()
+            let jogadoraEmEdicao = null
+            
             // Acontece quando a página inicia
             document.addEventListener('DOMContentLoaded', () => {
                 setupEventListeners();
@@ -127,6 +129,7 @@ const jogadorasIniciais = [
             }
 
             // Cria as cartas das jogadoras, é chamado no CarregarJogadoras()
+            
             function criarJogadorasCard(jogadoras) {
                 const card = document.createElement('div');
                 card.className = 'jogadoras-card';
@@ -164,14 +167,16 @@ const jogadorasIniciais = [
                 //tenho q chamar isso aq dentro pq se chamo fora ela as vezes n existe e trava tudo, aq dentro pelo menos ela sempre vai achar oq precisa
                 const favoritarBtn = card.querySelector('.btn-favoritar');
                 const deletarBtn = card.querySelector('.btn-deletar');
+                const editarBtn = card.querySelector('.btn-editar');
                 
                 favoritarBtn.addEventListener('click', () => ativarFavorito(jogadoras.id));
                 deletarBtn.addEventListener('click', () => deletarJogadora(jogadoras.id));
+                editarBtn.addEventListener('click', () => editarJogadora(jogadoras.id));
 
                 return card;
             }
                     
-            // Carrega o jogadorasContainer, é chamado pela função carregarLocalStorage(), e pela função ordemJogadoras()
+            // Carrega o jogadorasContainer, é chamado pela função carregarLocalStorage(), setupEventListener(), ordemJogadoras(),  ativarFavorito(), enviarForm() e deletarJogadora()
             function carregarJogadoras() {
                 const pesquisa = pesquisarInpt.value.toLowerCase();
                 
@@ -207,6 +212,7 @@ const jogadorasIniciais = [
 
 // FUNÇÕES Q ACONTECEM PQ O USUARIO FAZ ACONTECER (as vezes)
 
+// Salva no local storage quando pedido, é chamado no enviarForm(), deletarJogadora(), salvarJogadora()
 function salvarJogadoras() {
     localStorage.setItem('jogadorasGuardadas', JSON.stringify(jogadorasGuardadas));
 }
@@ -246,10 +252,36 @@ function fecharCampo() {
     jogadoraFormulario.reset();
 }
 
+
+
+function editarJogadora(jogadoraId) {
+    const jogadora = jogadorasGuardadas.find(j => j.id === jogadoraId);
+    if (!jogadora) return;
+
+    // muda o valor da jogadoraEmEdicao para o id da jogadora q clicamos para editar
+    jogadoraEmEdicao = jogadoraId; 
+
+    // preencher os campos com os dados da jogadora existente
+    document.getElementById('JogadoraNome').value = jogadora.nome;
+    document.getElementById('jogadoraPosicao').value = jogadora.posicao;
+    document.getElementById('jogadoraClube').value = jogadora.clube;
+    document.getElementById('jogadoraFoto').value = jogadora.foto;
+    document.getElementById('jogadoraGols').value = jogadora.gols;
+    document.getElementById('jogadoraAssistencias').value = jogadora.assistencias;
+    document.getElementById('jogadoraJogos').value = jogadora.jogos;
+
+    // abre o formulario
+    jogadoraModal.style.display = 'flex'; 
+}
+
+
+
+
 // Manipular envio do formulário
 function enviarForm(e) {
     e.preventDefault();
-    // Define a constante de cada campo
+
+    // constantes para serem adicionadas depois em jogadoras
     const nome = document.getElementById('JogadoraNome').value;
     const posicao = document.getElementById('jogadoraPosicao').value;
     const clube = document.getElementById('jogadoraClube').value;
@@ -258,30 +290,53 @@ function enviarForm(e) {
     const assistencias = parseInt(document.getElementById('jogadoraAssistencias').value);
     const jogos = parseInt(document.getElementById('jogadoraJogos').value);
 
-    //logica para achar o id da nova jogadora
-    let novoId = 1;
-    if (jogadorasGuardadas.length > 0) {
-        novoId = jogadorasGuardadas[jogadorasGuardadas.length - 1].id + 1;
-    }
-    // Cria uma novaJogadora q vai ser adicionada no jogadorasGuardadas em breve
-    const novaJogadora = {
-        id: novoId,
-        nome: nome,
-        posicao: posicao,
-        clube: clube,
-        foto: foto,
-        gols: gols,
-        assistencias: assistencias,
-        jogos: jogos,
-        favorita: false
-    };
+    // se em jogadorasEmEdição não for null
+    if (jogadoraEmEdicao) {
+        // faz as alterações na jogadora correspondente ao id
+        const index = jogadorasGuardadas.findIndex(j => j.id === jogadoraEmEdicao);
+        if (index !== -1) {
+            jogadorasGuardadas[index] = {
+                ...jogadorasGuardadas[index], 
+                nome, posicao, clube, foto, gols, assistencias, jogos
+            };
+            salvarJogadoras();
+            carregarJogadoras();
+            fecharCampo();
+            alert("Jogadora editada com sucesso!");
+        }
+        // volta a mostrar jogadoraEmEdição como null
+        jogadoraEmEdicao = null; 
 
-    jogadorasGuardadas.push(novaJogadora);
-    salvarJogadoras();
-    carregarJogadoras();
-    fecharCampo();
+        // se não ele ve q estamos criando e não editando
+    } else {
+        // ve o novo id da jogadora
+        let novoId = 1;
+        if (jogadorasGuardadas.length > 0) {
+            novoId = jogadorasGuardadas[jogadorasGuardadas.length - 1].id + 1;
+        }
+        // inseri os dados do forms no novaJogadora
+        const novaJogadora = {
+            id: novoId,
+            nome,
+            posicao,
+            clube,
+            foto,
+            gols,
+            assistencias,
+            jogos,
+            favorita: false
+        };
+        // adiciona a nova jogadora no jogadorasGuardadas
+        jogadorasGuardadas.push(novaJogadora);  
+        salvarJogadoras();
+        carregarJogadoras();
+        fecharCampo();
+        alert("Jogadora adicionada com sucesso!");
+    }
 }
 
+
+// Deleta a jogadora depois de perguntar educadamente se o usuario deseja fazer tal
 function deletarJogadora(jogadoraId) {
     const confirmar = confirm("Tem certeza que deseja excluir esta jogadora?");
     if (!confirmar) return;
@@ -292,5 +347,6 @@ function deletarJogadora(jogadoraId) {
         jogadorasGuardadas.splice(jogadorasIndentificador, 1); 
         salvarJogadoras();
         carregarJogadoras();
+        alert("Jogadora Removida com Sucesso!")
     }
 }
