@@ -1,7 +1,10 @@
 # Passa-a-Bola
 
-**Descrição:**  
 Passa-a-Bola é uma aplicação web para gerenciar e visualizar jogadoras de futebol feminino. O usuário pode pesquisar, filtrar por clube, ordenar por nome ou posição, adicionar, editar e deletar jogadoras. Além disso, é possível marcar jogadoras como favoritas.  
+
+**GIT HUB PAGES**:
+
+https://sambiokeka.github.io/CRUDFutebolFeminino/
 
 ---
 
@@ -120,3 +123,4 @@ select.value = valorAtual;
 * A aplicação é totalmente **front-end**, utilizando apenas **HTML, CSS e JavaScript**.
 * Todas as alterações permanecem mesmo após fechar o navegador, graças ao **LocalStorage**.
 * O filtro de clubes é dinâmico e evita duplicatas, mantendo a seleção do usuário após atualização.
+
